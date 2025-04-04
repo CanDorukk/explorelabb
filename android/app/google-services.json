@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "793080128652",
+    "project_id": "explorelab-29cb5",
+    "storage_bucket": "explorelab-29cb5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:793080128652:android:c046a8c3242a8eec8b47a9",
+        "android_client_info": {
+          "package_name": "com.explorelab.explorelab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC03Xqz9N-nTI1IKrcS1yNmPz1dVaL9hiU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
