@@ -1,14 +1,17 @@
+import 'package:explorelab/core/LocaleManager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class KavramOgretim extends StatefulWidget {
+  final String id;
+
+  KavramOgretim({required this.id});
+
   @override
   _KavramOgretimState createState() => _KavramOgretimState();
-  final String id; // id eklendi
-
-  KavramOgretim({required this.id}); // required olarak işaretlendi
 }
 
 class ItemModel {
@@ -17,7 +20,6 @@ class ItemModel {
 
   ItemModel({required this.dersAd, required this.link});
 
-  // Firestore'dan veri çekerken bu model kullanılacak
   factory ItemModel.fromMap(Map<String, dynamic> data) {
     return ItemModel(
       dersAd: data['dersAd'] ?? "Bilinmeyen Ders",
@@ -34,22 +36,20 @@ class _KavramOgretimState extends State<KavramOgretim> {
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
-    _fetchDataFromFirestore();
+    _fetchDataFromFirestore(widget.id);
   }
 
-  // 📌 Firestore'dan Dersleri Çek
-  Future<void> _fetchDataFromFirestore() async {
+  Future<void> _fetchDataFromFirestore(String collectionName) async {
     try {
-      FirebaseFirestore.instance
-          .collection("kavram_ogretimi") // Firestore koleksiyon adı
-          .get()
-          .then((querySnapshot) {
-        List<ItemModel> tempItems = querySnapshot.docs
-            .map((doc) => ItemModel.fromMap(doc.data()))
-            .toList();
-        setState(() {
-          items = tempItems;
-        });
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection(collectionName).get();
+
+      List<ItemModel> tempItems = querySnapshot.docs
+          .map((doc) => ItemModel.fromMap(doc.data()))
+          .toList();
+
+      setState(() {
+        items = tempItems;
       });
     } catch (e) {
       print("Firestore Hatası: $e");
@@ -57,6 +57,8 @@ class _KavramOgretimState extends State<KavramOgretim> {
   }
 
   Widget _buildItemCard(ItemModel item) {
+    final localManager = Provider.of<LocalManager>(context);
+
     return GestureDetector(
       onTap: () async {
         if (await canLaunch(item.link)) {

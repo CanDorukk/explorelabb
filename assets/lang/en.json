@@ -76,7 +76,11 @@
   "guess_rights_over_message" : "Your Guessing Rights Are Over",
   "loading_words_occurred_message" : "An error occurred while loading words",
   "no_words_found_message" : "No words found in document",
-  "back_login" : "Back to login"
-
+  "back_login" : "Back to login",
+  "chemistry_experiments" : "Chemistry Experiments",
+  "astronomy_adventure" : "Astronomy Adventure",
+  "physics_experiments": "Pyhsics Experiments",
+  "nature_exploration" : "Nature Exploration",
+  "under_the_microscope" : "Under The Microscope"
 
 }

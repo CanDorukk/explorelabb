@@ -1,0 +1,46 @@
+{
+  "title": "Kimya Deneyleri",
+  "topics": [
+    {
+      "id": "deney_1",
+      "title": "Asit-Baz Tepkimesi",
+      "summary": "Basit bir asit-baz tepkimesi deneyidir.",
+      "image": "https://ornek.com/images/deney1.jpg",
+      "details": {
+        "description": "Bu deneyde turnusol kağıdı ile asit ve baz ayırt edilir.",
+        "materials": [
+          "Turnusol Kağıdı",
+          "Limon Suyu",
+          "Sabunlu Su"
+        ],
+        "steps": [
+          "Turnusol kağıdını alın.",
+          "Asit ve baz çözeltilerini hazırlayın.",
+          "Kağıdı sırasıyla sıvılara batırın.",
+          "Renk değişimini gözlemleyin."
+        ],
+        "videoLink": "https://youtube.com/watch?v=example"
+      }
+    },
+    {
+      "id": "deney_2",
+      "title": "Yanma Tepkimesi",
+      "summary": "Basit bir yanma reaksiyonu gözlemlenir.",
+      "image": "https://ornek.com/images/deney2.jpg",
+      "details": {
+        "description": "Bu deneyde mumun yanma tepkimesi incelenir.",
+        "materials": [
+          "Mum",
+          "Çakmak",
+          "Cam bardak"
+        ],
+        "steps": [
+          "Mumu yakın.",
+          "Bir süre sonra cam bardağı üstüne koyun.",
+          "Alevin sönüşünü gözlemleyin."
+        ],
+        "videoLink": "https://youtube.com/watch?v=example2"
+      }
+    }
+  ]
+}

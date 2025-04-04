@@ -76,6 +76,10 @@
   "guess_rights_over_message" : "Tahmin Hakkın Bitti",
   "loading_words_occurred_message" : "Kelimeler yüklenirken bir hata oluştu",
   "no_words_found_message" : "dokümanında kelime bulunamadı",
-  "back_login" : "Giriş sayfasına geri dön"
-
+  "back_login" : "Giriş sayfasına geri dön",
+  "chemistry_experiments" : "Kimya Deneyleri",
+  "astronomy_adventure" : "Astronomi Macerası",
+  "physics_experiments": "Fizik Deneyleri",
+  "nature_exploration" : "Doğa Keşfi",
+  "under_the_microscope" : "Mikroskop Altında"
 }

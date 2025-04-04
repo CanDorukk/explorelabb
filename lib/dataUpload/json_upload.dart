@@ -5,12 +5,12 @@ import 'dart:convert';
 Future<void> uploadWords() async {
   final firestore = FirebaseFirestore.instance;
 
-  final String jsonString =
-      await root_bundle.rootBundle.loadString('assets/lang/en.json');
+  final String jsonString = await root_bundle.rootBundle
+      .loadString('assets/jsons/chemistry_experiments.json');
 
   final Map<String, dynamic> data = jsonDecode(jsonString);
 
-  await firestore.collection('languages').doc('en').set(data);
+  await firestore.collection('lessons').doc('chemistry_experiments').set(data);
 
   print('Veri Firestore\'a yüklendi!');
 }

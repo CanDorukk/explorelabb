@@ -1,6 +1,8 @@
+import 'package:explorelab/core/LocaleManager.dart';
 import 'package:explorelab/screens/item_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -19,11 +21,11 @@ class _HomePageState extends State<HomePage> {
   final Color accentColor = Colors.green;
 
   List<ItemModel> items = [
-    ItemModel("1", "Kavram Öğretimi", 5),
-    ItemModel("2", "Tam-Yarım-Çeyrek", 3),
-    ItemModel("3", "Mevsimler", 4),
-    ItemModel("4", "Trafik", 2),
-    ItemModel("5", "Çöp Adam", 6),
+    ItemModel("1", "chemistry_experiments", 5),
+    ItemModel("2", "astronomy_adventure", 3),
+    ItemModel("3", "physics_experiments", 4),
+    ItemModel("4", "nature_exploration", 2),
+    ItemModel("5", "under_the_microscope", 6),
   ];
 
   @override
@@ -41,6 +43,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildItemCardChild(ItemModel item) {
+    final localManager = Provider.of<LocalManager>(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -48,7 +52,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              item.dersAd,
+              localManager.translate(item.dersAd),
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],
@@ -90,7 +94,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Text(
-              item.dersSayi.toString(),
+              item.dersSayi
+                  .toString(), // TODO : burada içerikte bulunan ders sayısının belirtilmesi gerekiyor.
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -107,11 +112,13 @@ class _HomePageState extends State<HomePage> {
       onTap: () {
         if (item.id == "1") {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => KavramOgretim(id: item.id)),
+            MaterialPageRoute(
+                builder: (context) => KavramOgretim(id: item.dersAd)),
           );
         } else {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => KavramOgretim(id: item.id)),
+            MaterialPageRoute(
+                builder: (context) => KavramOgretim(id: item.dersAd)),
           );
         }
       },
