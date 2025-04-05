@@ -1,4 +1,5 @@
 import 'package:explorelab/core/LocaleManager.dart';
+import 'package:explorelab/screens/firestore_service.dart';
 import 'package:explorelab/screens/trainings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,26 +13,53 @@ class HomePage extends StatefulWidget {
 class ItemModel {
   final String id;
   final String dersAd;
-  final int dersSayi;
+  int dersSayi;
 
   ItemModel(this.id, this.dersAd, this.dersSayi);
 }
 
 class _HomePageState extends State<HomePage> {
   final Color accentColor = Colors.green;
-
-  List<ItemModel> items = [
-    ItemModel("1", "chemistry_experiments", 5),
-    ItemModel("2", "astronomy_adventure", 3),
-    ItemModel("3", "physics_experiments", 4),
-    ItemModel("4", "nature_exploration", 2),
-    ItemModel("5", "under_the_microscope", 6),
-  ];
+  final FirestoreService _firestoreService = FirestoreService();
+  List<ItemModel> items = [];
 
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+    _initializeItems();
+  }
+
+  void _initializeItems() {
+    items = [
+      ItemModel("chemistry_experiments", "chemistry_experiments", 0),
+      ItemModel("astronomy_adventure", "astronomy_adventure", 0),
+      ItemModel("physics_experiments", "physics_experiments", 0),
+      ItemModel("nature_exploration", "nature_exploration", 0),
+      ItemModel("under_the_microscope", "under_the_microscope", 0),
+    ];
+    _loadTopicCounts();
+  }
+
+  Future<void> _loadTopicCounts() async {
+    // Her bir item için ayrı ayrı sayım yap
+    for (final item in items) {
+      try {
+        final count = await _firestoreService.getTopicCount(item.id);
+
+        // Debug çıktısı ekliyoruz
+        debugPrint('${item.id} için konu sayısı: $count');
+
+        setState(() {
+          item.dersSayi = count;
+        });
+      } catch (e) {
+        debugPrint('Hata: ${item.id} - $e');
+        setState(() {
+          item.dersSayi = 0; // Hata durumunda 0 göster
+        });
+      }
+    }
   }
 
   Widget _buildTitle() {
@@ -48,30 +76,24 @@ class _HomePageState extends State<HomePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              localManager.translate(item.dersAd),
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                localManager.translate(item.dersAd),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             IconButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => Trainings(
-                          id: item
-                              .id)), // Doğru şekilde id parametresini gönder
-                );
-              },
-              icon: Icon(
-                Icons.menu_book_rounded,
-              ),
+              onPressed: () => _navigateToTrainings(item.id),
+              icon: Icon(Icons.menu_book_rounded),
               color: accentColor,
             )
           ],
@@ -80,22 +102,11 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             IconButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => Trainings(
-                          id: item
-                              .id)), // Doğru şekilde id parametresini gönder
-                );
-              },
-              icon: Icon(
-                Icons.menu,
-                color: Colors.grey,
-              ),
+              onPressed: () => _navigateToTrainings(item.id),
+              icon: Icon(Icons.menu, color: Colors.grey),
             ),
             Text(
-              item.dersSayi
-                  .toString(), // TODO : burada içerikte bulunan ders sayısının belirtilmesi gerekiyor.
+              item.dersSayi.toString(),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -107,30 +118,30 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _navigateToTrainings(String id) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => Trainings(id: id)),
+    );
+  }
+
   Widget _buildItemCard(ItemModel item) {
     return GestureDetector(
-      onTap: () {
-        if (item.id == "1") {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => Trainings(id: item.dersAd)),
-          );
-        } else {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => Trainings(id: item.dersAd)),
-          );
-        }
-      },
+      onTap: () => _navigateToTrainings(item.id),
       child: Container(
         width: 100,
         height: 120,
         padding: EdgeInsets.all(16),
-        margin: EdgeInsets.only(left: 32, right: 32, top: 4, bottom: 4),
+        margin: EdgeInsets.symmetric(horizontal: 32, vertical: 4),
         decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(28)),
-            boxShadow: [
-              BoxShadow(color: Color.fromARGB(255, 39, 96, 41), blurRadius: 10)
-            ]),
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(28)),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromARGB(255, 39, 96, 41),
+              blurRadius: 10,
+            )
+          ],
+        ),
         child: _buildItemCardChild(item),
       ),
     );
@@ -140,16 +151,14 @@ class _HomePageState extends State<HomePage> {
     return ListView.builder(
       itemCount: items.length,
       itemBuilder: (context, index) {
-        var item = items.elementAt(index);
-        return _buildItemCard(item);
+        return _buildItemCard(items[index]);
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: Colors.grey[300],
@@ -159,18 +168,8 @@ class _HomePageState extends State<HomePage> {
         title: _buildTitle(),
         actions: <Widget>[
           IconButton(
-            onPressed: () {
-              // Burada 'item' değişkeni yok, dolayısıyla bir id değeri göndermelisin
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) =>
-                        Trainings(id: "0")), // id: "0" olarak düzeltildi
-              );
-            },
-            icon: Icon(
-              Icons.article,
-              color: Colors.blueGrey,
-            ),
+            onPressed: () => _navigateToTrainings("0"),
+            icon: Icon(Icons.article, color: Colors.blueGrey),
           )
         ],
       ),
@@ -181,14 +180,16 @@ class _HomePageState extends State<HomePage> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                  width: width,
-                  height: height / 2,
-                  padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  decoration: BoxDecoration(
-                      color: accentColor,
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(28),
-                          topLeft: Radius.circular(28)))),
+                width: size.width,
+                height: size.height / 2,
+                decoration: BoxDecoration(
+                  color: accentColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(28),
+                    topRight: Radius.circular(28),
+                  ),
+                ),
+              ),
             ),
             _buildCardsList(),
           ],
