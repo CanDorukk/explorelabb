@@ -17,7 +17,7 @@ void main() async {
 
   runApp(MyApp());
 
-  await uploadWords();
+  // await uploadWords();
 }
 
 class MyApp extends StatelessWidget {

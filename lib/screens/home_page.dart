@@ -1,5 +1,5 @@
 import 'package:explorelab/core/LocaleManager.dart';
-import 'package:explorelab/screens/item_page.dart';
+import 'package:explorelab/screens/trainings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (context) => KavramOgretim(
+                      builder: (context) => Trainings(
                           id: item
                               .id)), // Doğru şekilde id parametresini gönder
                 );
@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (context) => KavramOgretim(
+                      builder: (context) => Trainings(
                           id: item
                               .id)), // Doğru şekilde id parametresini gönder
                 );
@@ -112,13 +112,11 @@ class _HomePageState extends State<HomePage> {
       onTap: () {
         if (item.id == "1") {
           Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => KavramOgretim(id: item.dersAd)),
+            MaterialPageRoute(builder: (context) => Trainings(id: item.dersAd)),
           );
         } else {
           Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => KavramOgretim(id: item.dersAd)),
+            MaterialPageRoute(builder: (context) => Trainings(id: item.dersAd)),
           );
         }
       },
@@ -166,7 +164,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (context) =>
-                        KavramOgretim(id: "0")), // id: "0" olarak düzeltildi
+                        Trainings(id: "0")), // id: "0" olarak düzeltildi
               );
             },
             icon: Icon(
