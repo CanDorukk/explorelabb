@@ -41,6 +41,7 @@ dependencies:
   provider: ^6.1.4
   smooth_page_indicator: ^1.2.1
   url_launcher: ^6.1.14
+  youtube_player_flutter: ^9.1.1
 
 dev_dependencies:
   flutter_test:

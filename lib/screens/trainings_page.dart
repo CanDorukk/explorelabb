@@ -1,17 +1,15 @@
-import 'package:explorelab/core/LocaleManager.dart';
+import 'package:explorelab/screens/lessons_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Trainings extends StatefulWidget {
   final String id;
 
-  Trainings({required this.id});
+  const Trainings({required this.id, Key? key}) : super(key: key);
 
   @override
-  _Trainings createState() => _Trainings();
+  _TrainingsState createState() => _TrainingsState();
 }
 
 class TopicModel {
@@ -52,7 +50,7 @@ class TopicModel {
   }
 }
 
-class _Trainings extends State<Trainings> {
+class _TrainingsState extends State<Trainings> {
   List<TopicModel> topics = [];
 
   @override
@@ -64,24 +62,21 @@ class _Trainings extends State<Trainings> {
 
   Future<void> _fetchDataFromFirestore(String documentId) async {
     try {
-      // Sabit koleksiyon adı "lessons", belgenin id'si ise "documentId"
       final docSnapshot = await FirebaseFirestore.instance
-          .collection('lessons') // Koleksiyon adı sabit
-          .doc(documentId) // Belge ID'si
+          .collection('lessons')
+          .doc(documentId)
           .get();
 
-      // Belgeyi aldıktan sonra, veriyi TopicModel'e dönüştür
       if (docSnapshot.exists) {
         var docData = docSnapshot.data() as Map<String, dynamic>;
 
-        // 'topics' listesini alıyoruz
         List<TopicModel> tempTopics = [];
         for (var topicData in docData['topics']) {
           tempTopics.add(TopicModel.fromMap(topicData));
         }
 
         setState(() {
-          topics = tempTopics; // 'topics' verisini listeye aktar
+          topics = tempTopics;
         });
       } else {
         print("Belge bulunamadı");
@@ -94,22 +89,21 @@ class _Trainings extends State<Trainings> {
   Widget _buildTopicCard(TopicModel topic) {
     return GestureDetector(
       onTap: () {
-        // Tıklandığında detay sayfasına yönlendireceğiz
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TopicDetailScreen(topic: topic),
+            builder: (context) => LessonsPage(topic: topic),
           ),
         );
       },
       child: Container(
         width: 90,
         height: 80,
-        padding: EdgeInsets.all(16),
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(30)),
+          borderRadius: const BorderRadius.all(Radius.circular(30)),
           boxShadow: [
             BoxShadow(color: Colors.green.shade900, blurRadius: 10),
           ],
@@ -117,7 +111,7 @@ class _Trainings extends State<Trainings> {
         child: Center(
           child: Text(
             topic.title,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
         ),
@@ -127,9 +121,9 @@ class _Trainings extends State<Trainings> {
 
   Widget _buildTopicsList() {
     return topics.isEmpty
-        ? Center(child: CircularProgressIndicator()) // Veri yüklenirken göster
+        ? const Center(child: CircularProgressIndicator())
         : ListView.builder(
-            padding: EdgeInsets.only(bottom: 30),
+            padding: const EdgeInsets.only(bottom: 30),
             itemCount: topics.length,
             itemBuilder: (context, index) {
               var topic = topics[index];
@@ -145,70 +139,15 @@ class _Trainings extends State<Trainings> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.green,
-        title: Text(
+        title: const Text(
           "Kavram Öğretimi",
           style: TextStyle(
               fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Container(
-        margin: EdgeInsets.only(top: 8),
+        margin: const EdgeInsets.only(top: 8),
         child: _buildTopicsList(),
-      ),
-    );
-  }
-}
-
-class TopicDetailScreen extends StatelessWidget {
-  final TopicModel topic;
-
-  TopicDetailScreen({required this.topic});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(topic.title),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.network(topic.image),
-            SizedBox(height: 10),
-            Text(
-              topic.summary,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Açıklama: ${topic.description}",
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Malzemeler: ${topic.materials.join(', ')}",
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Adımlar: ${topic.steps.join(', ')}",
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                if (await canLaunch(topic.videoLink)) {
-                  launch(topic.videoLink);
-                } else {
-                  print("Bağlantı açılamadı: ${topic.videoLink}");
-                }
-              },
-              child: Text("Video İzle"),
-            ),
-          ],
-        ),
       ),
     );
   }
