@@ -122,13 +122,15 @@ class _TrainingsState extends State<Trainings> {
   Widget _buildTopicsList() {
     return topics.isEmpty
         ? const Center(child: CircularProgressIndicator())
-        : ListView.builder(
+        : ListView.separated(
             padding: const EdgeInsets.only(bottom: 30),
             itemCount: topics.length,
             itemBuilder: (context, index) {
               var topic = topics[index];
               return _buildTopicCard(topic);
             },
+            separatorBuilder: (context, index) =>
+                const SizedBox(height: 8), // Kartlar arası boşluk
           );
   }
 
@@ -137,6 +139,9 @@ class _TrainingsState extends State<Trainings> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
+        toolbarHeight: 100,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.green,
         title: const Text(
@@ -146,7 +151,7 @@ class _TrainingsState extends State<Trainings> {
         ),
       ),
       body: Container(
-        margin: const EdgeInsets.only(top: 8),
+        margin: const EdgeInsets.symmetric(vertical: 24),
         child: _buildTopicsList(),
       ),
     );
